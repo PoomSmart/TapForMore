@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+  	<key>title</key>
+    <string>TapForMore</string>
+  	<key>entry</key>
+	<dict>
+      <key>cell</key>
+      <string>PSLinkCell</string>
+      <key>icon</key>
+      <string></string>
+      <key>label</key>
+      <string>TapForMore</string>
+    </dict>
+	 <key>items</key>
+    <array>
+    <dict>
+        <key>cell</key>
+        <string>PSGroupCell</string>
+        <key>footerAlignment</key>
+        <integer>1</integer>
+        <key>footerText</key>
+        <string>By enabling Auto install/remove, TapForMore will automatically confirm any package (re)install/remove/upgrade task.
+        
+By enabling Auto dismiss, TapForMore will automatically dismiss the confirmation page at any task performed by any option triggered by tap.
+        
+© 2013 - 2016 Thatchapon Unprasert
+(@PoomSmart)</string>
+      </dict>
+    <dict>
+		<key>cell</key>
+		<string>PSSwitchCell</string>
+		<key>PostNotification</key>
+		<string>com.PS.TapForMore/ReloadPrefs</string>
+		<key>default</key>
+		<true/>
+		<key>defaults</key>
+		<string>com.PS.TapForMore</string>
+		<key>key</key>
+		<string>enabled</string>
+		<key>label</key>
+		<string>Enabled</string>
+	</dict>
+	<dict>
+		<key>cell</key>
+		<string>PSSwitchCell</string>
+		<key>PostNotification</key>
+		<string>com.PS.TapForMore/ReloadPrefs</string>
+		<key>default</key>
+		<false/>
+		<key>defaults</key>
+		<string>com.PS.TapForMore</string>
+		<key>key</key>
+		<string>confirm</string>
+		<key>label</key>
+		<string>Auto install/remove</string>
+	</dict>
+	<dict>
+		<key>cell</key>
+		<string>PSSwitchCell</string>
+		<key>PostNotification</key>
+		<string>com.PS.TapForMore/ReloadPrefs</string>
+		<key>default</key>
+		<true/>
+		<key>defaults</key>
+		<string>com.PS.TapForMore</string>
+		<key>key</key>
+		<string>autoDismiss</string>
+		<key>label</key>
+		<string>Auto dismiss</string>
+	</dict>
+	<dict>
+		<key>cell</key>
+		<string>PSSwitchCell</string>
+		<key>PostNotification</key>
+		<string>com.PS.TapForMore/ReloadPrefs</string>
+		<key>default</key>
+		<false/>
+		<key>defaults</key>
+		<string>com.PS.TapForMore</string>
+		<key>key</key>
+		<string>withIcon</string>
+		<key>label</key>
+		<string>With icon</string>
+	</dict>
+    </array>
+  </dict>
+</plist>

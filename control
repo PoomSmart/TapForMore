@@ -1,0 +1,10 @@
+Name: TapForMore
+Package: com.ps.tapformore
+Maintainer: PoomSmart
+Author: PoomSmart
+Depends: firmware (>= 4.0), firmware (<< 8.0), preferenceloader
+Section: Tweaks
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Manage packages via tap.
+Depiction: http://PoomSmart.github.io/repo/tapformore/index.html
