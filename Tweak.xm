@@ -1,5 +1,5 @@
 /*
-*	TapForMore (SwipeForMore alternative for earlier OS)
+*	TapForMore (SwipeForMore alternative for older OS)
 *	Made possible by DTActionSheet, thanks to Cocoanetics
 *
 *	Long tap package cell to activate options
