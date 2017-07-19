@@ -12,10 +12,20 @@
 #import <Cydia/ConfirmationController.h>
 #import <Cydia/ProgressController.h>
 #import <Cydia/Cydia-Class.h>
+#import <Cydia/Package.h>
 #import <notify.h>
 #import "../PSPrefs.x"
 #import "../PS.h"
 #import "DTActionSheet.h"
+
+static inline NSString *UCLocalizeEx(NSString *key, NSString *value = nil) {
+    return [[NSBundle mainBundle] localizedStringForKey:key value:value table:nil];
+}
+#define UCLocalize(key) UCLocalizeEx(@ key)
+
+@interface UINavigationController (Cydia)
+- (UIViewController *)parentOrPresentingViewController;
+@end
 
 @interface FilteredPackageListController () <UIActionSheetDelegate, UIGestureRecognizerDelegate>
 - (UITableView *)tableView;
@@ -33,8 +43,7 @@ BOOL isQueuing;
 NSString *tweakIdentifier = @"com.PS.TapForMore";
 NSString *format = @"%@ %@";
 
-HaveCallback()
-{
+HaveCallback() {
 	GetPrefs()
 	GetBool(enabled, @"enabled", YES)
 	GetBool(noConfirm, @"confirm", NO)
@@ -46,8 +55,7 @@ CYPackageController *cy;
 
 %hook CYPackageController
 
-- (id)initWithDatabase:(Database *)database forPackage:(Package *)package withReferrer:(id)referrer
-{
+- (id)initWithDatabase:(Database *)database forPackage:(Package *)package withReferrer:(id)referrer {
 	self = %orig;
 	cy = self;
 	return self;
@@ -65,8 +73,7 @@ CYPackageController *cy;
 
 %hook CydiaTabBarController
 
-- (void)presentViewController:(UIViewController *)vc animated:(BOOL)animated completion:(void (^)(void))completion
-{
+- (void)presentViewController:(UIViewController *)vc animated:(BOOL)animated completion:(void (^)(void))completion {
 	if ([vc isKindOfClass:[UINavigationController class]]) {
 		if ([((UINavigationController *)vc).topViewController class] == NSClassFromString(@"ConfirmationController")) {
 			void (^block)(void) = ^(void) {
@@ -102,8 +109,7 @@ static _finline void _UpdateExternalStatus(uint64_t newStatus) {
 
 %hook ProgressController
 
-- (void)invoke:(NSInvocation *)invocation withTitle:(NSString *)title
-{
+- (void)invoke:(NSInvocation *)invocation withTitle:(NSString *)title {
 	%orig;
 	if (should) {
 		should = NO;
@@ -126,14 +132,11 @@ static _finline void _UpdateExternalStatus(uint64_t newStatus) {
 
 %end
 
-NSString *itsString(NSString *key, NSString *value)
-{
-	// ¯\_(ツ)_/¯
+NSString *itsString(NSString *key, NSString *value) {
 	return [[NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/iTunesStore.framework"] localizedStringForKey:key value:value table:nil];
 }
 
-NSString *combine(NSString *icon, NSString *text)
-{
+NSString *combine(NSString *icon, NSString *text) {
 	if (withIcon)
 		return [NSString stringWithFormat:@"%@ %@", icon, text];
 	return text;
@@ -141,64 +144,53 @@ NSString *combine(NSString *icon, NSString *text)
 
 NSString *_buy = nil;
 
-NSString *buyString()
-{
+NSString *buyString() {
 	return withIcon ? @"💳" : _buy ? _buy : _buy = itsString(@"BUY", @"Buy");
 }
 
-NSString *installString()
-{
+NSString *installString() {
 	return combine(@"↓", UCLocalize("INSTALL"));
 }
 
-NSString *reinstallString()
-{
+NSString *reinstallString() {
 	return combine(@"↺", UCLocalize("REINSTALL"));
 }
 
-NSString *upgradeString()
-{
+NSString *upgradeString() {
 	return combine(@"↑", UCLocalize("UPGRADE"));
 }
 
-NSString *removeString()
-{
+NSString *removeString() {
 	return combine(@"╳", UCLocalize("REMOVE"));
 }
 
-NSString *queueString()
-{
+NSString *queueString() {
 	return combine(@"Q", UCLocalize("QUEUE"));
 }
 
-NSString *clearString()
-{
+NSString *clearString() {
 	return combine(@"⌧", UCLocalize("CLEAR"));
 }
 
-NSString *downgradeString()
-{
+NSString *downgradeString() {
 	return combine(@"⇵", UCLocalize("DOWNGRADE"));
 }
 
-NSString *normalizedQueue(NSString *text)
-{
+NSString *normalizedQueue(NSString *text) {
 	NSArray *subs = [text componentsSeparatedByString:@" "];
 	if (subs.count == 4)
-		return [NSString stringWithFormat:@"%@%@ %@ %@", subs[0], subs[2], subs[1], subs[3]];
+		return [NSString stringWithFormat:@"%@%@ %@ %@", [subs objectAtIndex:0], [subs objectAtIndex:2], [subs objectAtIndex:1], [subs objectAtIndex:3]];
 	return text;
 }
 
 %hook FilteredPackageListController
 
 %new
-- (UITableView *)tableView
-{
-	return (UITableView *)self.view.subviews[0];
+- (UITableView *)tableView {
+	return [((UITableView *)self.view).subviews objectAtIndex:0];
 }
 
-- (void)loadView
-{
+- (void)loadView {
 	%orig;
 	UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(tfm_handleLongPress:)];
 	gesture.minimumPressDuration = 0.32;
@@ -207,8 +199,7 @@ NSString *normalizedQueue(NSString *text)
 	[gesture release];
 }
 
-static void configureSheetForIndexPath(PackageListController *self, DTActionSheet *sheet, NSIndexPath *indexPath_)
-{
+static void configureSheetForIndexPath(PackageListController *self, DTActionSheet *sheet, NSIndexPath *indexPath_) {
 	Package *package = [self packageAtIndexPath:indexPath_];
 	sheet.title = package.name;
 	Cydia *delegate = (Cydia *)[UIApplication sharedApplication];
@@ -281,8 +272,7 @@ static void configureSheetForIndexPath(PackageListController *self, DTActionShee
 }
 
 %new
-- (void)tfm_handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
-{
+- (void)tfm_handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer {
 	if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
 		CGPoint p = [gestureRecognizer locationInView:self.tableView];
 		NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:p];
@@ -299,9 +289,8 @@ static void configureSheetForIndexPath(PackageListController *self, DTActionShee
 
 %end
 
-%ctor
-{
-	HaveObserver()
+%ctor {
+	HaveObserver();
 	callback();
 	if (enabled) {
 		%init;

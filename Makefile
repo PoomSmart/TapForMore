@@ -1,14 +1,11 @@
-GO_EASY_ON_ME = 1
-DEBUG = 0
-ARCHS = armv7 arm64
-PACKAGE_VERSION = 1.0
+PACKAGE_VERSION = 1.0.1
+TARGET = iphone:clang:latest:5.0
 
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = TapForMore
 TapForMore_FILES = DTActionSheet.m Tweak.xm
 TapForMore_FRAMEWORKS = UIKit
-TapForMore_CFLAGS = -std=c++11
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
