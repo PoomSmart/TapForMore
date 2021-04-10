@@ -4,8 +4,10 @@
 //
 //  Created by Oliver Drobnik on 08.06.12.
 //  Copyright (c) 2012 Cocoanetics. All rights reserved.
+//  Copyright (c) 2021 PoomSmart All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import <Availability.h>
 #import "DTWeakSupport.h"
 
